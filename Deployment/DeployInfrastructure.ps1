@@ -32,7 +32,7 @@ if ($notPresent)
     New-AzureRmStorageAccount -ResourceGroupName $resourceGroupName -Name $storageName -SkuName Standard_LRS -Location $region
     
     Write-Host "Creating Azure KeyVault [$($vaultName)] in [$($regionLower)]" -ForegroundColor Green
-    New-AzureRmKeyVault -ResourceGroupName $resourceGroup.ResourceGroupName -Name $vaultName -Location $regionLower
+    New-AzureRmKeyVault -ResourceGroupName $resourceGroup.ResourceGroupName -VaultName $vaultName -Location $regionLower
     $vault = Get-AzureRmKeyVault -ResourceGroupName $resourceGroup.ResourceGroupName -VaultName $vaultName
 
     Write-Host "Test Granting Permissions to KeyVault for [v-davidk@microsoft.com]" -ForegroundColor Green
