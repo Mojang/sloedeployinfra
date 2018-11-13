@@ -1,4 +1,4 @@
-﻿Import-Module AzureRM
+﻿Import-Module Azure
 #Required Variables
 $env = "prod"
 $group = "sloe"
