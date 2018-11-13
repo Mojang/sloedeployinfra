@@ -29,11 +29,11 @@ Get-AzureRmResourceGroup -Name $resourceGroupName -ev notPresent -ea 0
 
     #Write-Host "Creating Azure [$($serviceName)] Function using App Service Plan in [$($region)]"
 
-    Write-Host "Validating ARM Template for [$($serviceName)] Function using App Service Plan in [$($region)]"
-    Test-AzureRmResourceGroupDeployment -Name $serviceName -ResourceGroupName $resourceGroupName -TemplateFile $appTemplate
+    Write-Host "Validating ARM Template for [$($serviceName)] Function using App Service Plan in [$($region)]" 
+    Test-AzureRmResourceGroupDeployment -ResourceGroupName $resourceGroupName -TemplateFile $appTemplate -location $region -appName $serviceName 
 
     Write-Host "Creating Azure [$($serviceName)] Function using App Service Plan in [$($region)]"
-    New-AzureRmResourceGroupDeployment -Name $serviceName -ResourceGroupName $resourceGroupName -TemplateFile $appTemplate
+    New-AzureRmResourceGroupDeployment -ResourceGroupName $resourceGroupName -TemplateFile $appTemplate -location $region -appName $serviceName
 
     
     Write-Host "Environment Created - Please make sure to add the service principal permission to the keyvault"
