@@ -1,4 +1,4 @@
-﻿Import-Module Azure
+﻿Import-Module "C:\Program Files (x86)\Microsoft SDKs\Azure\PowerShell\ServiceManagement\Azure\Azure.psd1"
 #Required Variables
 $env = "prod"
 $group = "sloe"
