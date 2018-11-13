@@ -1,4 +1,4 @@
-﻿Install-Module -Name AzureADPreview -Force -Scope CurrentUser
+﻿Import-Module AzureRM
 #Required Variables
 $env = "prod"
 $group = "sloe"
@@ -49,7 +49,7 @@ if ($notPresent)
     Write-Host "Creating Azure [$($serviceName)] Function using App Service Plan in [$($region)]"
 
     Write-Host "Creating Azure [$($serviceName)] Function using App Service Plan in [$($region)]"
-    New-AzureRmResourceGroupDeployment -Name $serviceName -ResourceGroupName $resourceGroupName -TemplateFile 
+    New-AzureRmResourceGroupDeployment -Name $serviceName -ResourceGroupName $resourceGroupName -TemplateFile $appTemplate
 
     
     Write-Host "Environment Created - Please make sure to add the service principal permission to the keyvault"
