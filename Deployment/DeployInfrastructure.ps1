@@ -13,10 +13,10 @@ $resourceGroupName = $serviceName+"rg"
 $storageName = $serviceName+"sa"
 $vaultName = $serviceName+"vault"
 
-Write-Host "Executing at path $($scriptPath) via Service Principle [$(Get-AzureRmContext -DefaultProfile).Name]" -ForegroundColor Yellow
-Get-AzureRmContext -DefaultProfile
-$servicePrincipal = (Get-AzureRmContext -DefaultProfile).Name
-$servicePrincipalID = (Get-AzureRmContext -DefaultProfile).Account.Id
+Write-Host "Executing at path $($scriptPath) via Service Principle" -ForegroundColor Yellow
+Get-AzureRmContext
+$servicePrincipal = (Get-AzureRmContext).Name
+$servicePrincipalID = (Get-AzureRmContext).Account.Id
 
 #Create Azure Resource Group if not exists.
 Get-AzureRmResourceGroup -Name $resourceGroupName -ev notPresent -ea 0
