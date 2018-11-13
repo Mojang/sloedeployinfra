@@ -5,6 +5,7 @@ $group = "sloe"
 $service = $group+"infra"+$env
 $region = "East US"
 
+
 #Set the variables
 $resourceGroupName = $service+"rg"
 $storageName = $service+"sa"
