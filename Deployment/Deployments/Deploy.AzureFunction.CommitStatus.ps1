@@ -13,21 +13,21 @@ $resourceGroupName = $serviceName+"rg"
 $appName = $serviceName+"app"
 $appKey = $appName+"key"
 $vaultName = $group+"inf"+$env+"vault"
+$appTemplate = "$($sourceDir)\Deployment\Templates\AzureFunctionOnAppServicePlan.json"
 
 Write-Host "path is " $scriptPath
-$appTemplate = "..\Templates\AzureFunctionOnAppServicePlan.json"
 Write-Host "template is " $appTemplate
 Write-Host "Source Dir is " $sourceDir
 
 #Create Azure Resource Group if not exists.
 Get-AzureRmResourceGroup -Name $resourceGroupName -ev notPresent -ea 0
-if ($notPresent) 
-{
-    Write-Host "Azure Resource Group [$($resourceGroupName)] Not Present. Deploying Infrastructure..."
-    Write-Host "Creating Azure Resource Group [$($resourceGroupName)] in [$($region)]"
-    New-AzureRmResourceGroup -Name $resourceGroupName -Location $region
+#if ($notPresent) 
+#{
+    #Write-Host "Azure Resource Group [$($resourceGroupName)] Not Present. Deploying Infrastructure..."
+    #Write-Host "Creating Azure Resource Group [$($resourceGroupName)] in [$($region)]"
+    #New-AzureRmResourceGroup -Name $resourceGroupName -Location $region
 
-    Write-Host "Creating Azure [$($serviceName)] Function using App Service Plan in [$($region)]"
+    #Write-Host "Creating Azure [$($serviceName)] Function using App Service Plan in [$($region)]"
 
     Write-Host "Validating ARM Template for [$($serviceName)] Function using App Service Plan in [$($region)]"
     Test-AzureRmResourceGroupDeployment -ResourceGroupName testgroup -TemplateFile $appTemplate
@@ -37,8 +37,8 @@ if ($notPresent)
 
     
     Write-Host "Environment Created - Please make sure to add the service principal permission to the keyvault"
-}
-else 
-{
-    Write-Host "Azure Resource Group [$($resourceGroupName)] Exists. Skipping" -ForegroundColor Yellow
-}
+#}
+#else 
+#{
+#    Write-Host "Azure Resource Group [$($resourceGroupName)] Exists. Skipping" -ForegroundColor Yellow
+#}
