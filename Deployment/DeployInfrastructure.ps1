@@ -13,10 +13,10 @@ $resourceGroupName = $serviceName+"rg"
 $storageName = $serviceName+"sa"
 $vaultName = $serviceName+"vault"
 
-Write-Host "Executing at path $($scriptPath) via Service Principle" -ForegroundColor Yellow
-Get-AzureRmContext
-$servicePrincipal = (Get-AzureRmContext).Name
-$servicePrincipalID = (Get-AzureRmContext).Account.Id
+Write-Host "Executing at path $($scriptPath) via Service Principle [$(Get-AzureRmContext -DefaultProfile).Name]" -ForegroundColor Yellow
+Get-AzureRmContext -DefaultProfile
+$servicePrincipal = (Get-AzureRmContext -DefaultProfile).Name
+$servicePrincipalID = (Get-AzureRmContext -DefaultProfile).Account.Id
 
 #Create Azure Resource Group if not exists.
 Get-AzureRmResourceGroup -Name $resourceGroupName -ev notPresent -ea 0
@@ -35,21 +35,21 @@ if ($notPresent)
     New-AzureRmKeyVault -ResourceGroupName $resourceGroup.ResourceGroupName -VaultName $vaultName -Location $regionLower
     $vault = Get-AzureRmKeyVault -ResourceGroupName $resourceGroup.ResourceGroupName -VaultName $vaultName
 
+    Write-Host "Test Granting permissions to KeyVault for [v-davidk@microsoft.com]" -ForegroundColor Green
+    Set-AzureRmKeyVaultAccessPolicy -VaultName $vaultName -UserPrincipalName 'v-davidk@microsoft.com' -PermissionsToKeys create,import,delete,list -PermissionsToSecrets 'all' -ErrorAction Continue
     
     Write-Host "Granting Service Principle permissions to KeyVault for [$($servicePrincipal)]" -ForegroundColor Green
-    Set-AzureRmKeyVaultAccessPolicy -VaultName $vaultName -ServicePrincipalName $servicePrincipal -PermissionsToKeys create,import,delete,list -PermissionsToSecrets 'all'
+    Set-AzureRmKeyVaultAccessPolicy -VaultName $vaultName -ServicePrincipalName $servicePrincipal -PermissionsToKeys create,import,delete,list -PermissionsToSecrets 'all' -ErrorAction Continue
 
     Write-Host "Granting Service Principle permissions to KeyVault for [$($servicePrincipalId)]" -ForegroundColor Green
-    Set-AzureRmKeyVaultAccessPolicy -VaultName $vaultName -ObjectId $servicePrincipalId -PermissionsToKeys create,import,delete,list -PermissionsToSecrets 'all'
+    Set-AzureRmKeyVaultAccessPolicy -VaultName $vaultName -ObjectId $servicePrincipalId -PermissionsToKeys create,import,delete,list -PermissionsToSecrets 'all' -ErrorAction Continue
 
-    Write-Host "Test Granting permissions to KeyVault for [v-davidk@microsoft.com]" -ForegroundColor Green
-    Set-AzureRmKeyVaultAccessPolicy -VaultName $vaultName -UserPrincipalName 'v-davidk@microsoft.com' -PermissionsToKeys create,import,delete,list -PermissionsToSecrets 'all'
 
     $Secret = ConvertTo-SecureString -String 'Password' -AsPlainText -Force
     Write-Host "Test Setting Secret [TestSecret] to KeyVault [$($vaultName)]" -ForegroundColor Green
-    Set-AzureKeyVaultSecret -VaultName $vaultName -Name 'TestSecret' -SecretValue $Secret
+    Set-AzureKeyVaultSecret -VaultName $vaultName -Name 'TestSecret' -SecretValue $Secret -ErrorAction Continue
     Write-Host "Test Adding Key [TestCertSoftwareKey] to KeyVault [$($vaultName)] in [Software] destination." -ForegroundColor Green
-    Add-AzureKeyVaultKey –VaultName $vaultName –Name ‘TestCertSoftwareKey’ –Destination ‘Software’
+    Add-AzureKeyVaultKey –VaultName $vaultName –Name ‘TestCertSoftwareKey’ –Destination ‘Software’ -ErrorAction Continue
 
     Write-Host "Deploying Infrastructure Completed - All Done" -ForegroundColor Yellow
 }
