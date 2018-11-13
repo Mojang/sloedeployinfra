@@ -2,7 +2,6 @@
 $env = "prod"
 $group = "sloe"
 $service = "cmts"
-$vaultName = $group+"inf"+$env+"vault"
 $region = "East US"
 
 #Scope variables
@@ -12,8 +11,10 @@ $serviceName = $group+$service+$env
 $resourceGroupName = $serviceName+"rg"
 $appName = $serviceName+"app"
 $appKey = $appName+"key"
+$vaultName = $group+"inf"+$env+"vault"
+
 Write-Host "path is " + $scriptPath
-$appTemplate = $scriptPath+"\..\Templates\AzureFunctionOnAppServicePlan.json"
+$appTemplate = "..\Templates\AzureFunctionOnAppServicePlan.json"
 Write-Host "template is " + $appTemplate
 
 #Create Azure Resource Group if not exists.
