@@ -1,4 +1,4 @@
-﻿Import-Module "C:\Program Files (x86)\Microsoft SDKs\Azure\PowerShell\ServiceManagement\Azure\Azure.psd1"
+﻿Install-Module -Name AzureADPreview -Force
 Get-Module -ListAvailable -Name Azure -Refresh
 #Required Variables
 $env = "prod"
