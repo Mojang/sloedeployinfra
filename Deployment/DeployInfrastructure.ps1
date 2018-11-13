@@ -1,4 +1,5 @@
-﻿$scriptPath = $(get-location).Path
+﻿#Required Variables
+$scriptPath = $(get-location).Path
 $subscription = "Microsoft Minecraft Azure"
 $tenantId = "72f988bf-86f1-41af-91ab-2d7cd011db47"
 $env = "prod"
@@ -6,17 +7,18 @@ $group = "sloe"
 $service = "infra"
 $serviceName = $group+$service+$env
 $region = "East US"
-$regionLower = $region.ToLower().Replace(" ","");
+$servicePrincipal = "dev-mc-Minecraft-0f4f1cf7-6423-415c-9f9c-599eb36bdf4f"
+$servicePrincipalID = "9e1d118d-a4ff-449a-8186-0a46d3e6decf"
 
-#Set the variables
+#Scope variables
+$regionLower = $region.ToLower().Replace(" ","");
 $resourceGroupName = $serviceName+"rg"
 $storageName = $serviceName+"sa"
 $vaultName = $serviceName+"vault"
 
-Write-Host "Executing at path $($scriptPath) via Service Principle" -ForegroundColor Yellow
+Write-Host "Executing at path $($scriptPath) via Service Principle $($servicePrincipal)" -ForegroundColor Yellow
 Get-AzureRmContext
-$servicePrincipal = (Get-AzureRmContext).Name
-$servicePrincipalID = (Get-AzureRmContext).Account.Id
+
 
 #Create Azure Resource Group if not exists.
 Get-AzureRmResourceGroup -Name $resourceGroupName -ev notPresent -ea 0
@@ -35,16 +37,15 @@ if ($notPresent)
     New-AzureRmKeyVault -ResourceGroupName $resourceGroup.ResourceGroupName -VaultName $vaultName -Location $regionLower
     $vault = Get-AzureRmKeyVault -ResourceGroupName $resourceGroup.ResourceGroupName -VaultName $vaultName
 
-    Write-Host "Test Granting permissions to KeyVault for [v-davidk@microsoft.com]" -ForegroundColor Green
-    Set-AzureRmKeyVaultAccessPolicy -VaultName $vaultName -UserPrincipalName 'v-davidk@microsoft.com' -PermissionsToKeys create,import,delete,list -PermissionsToSecrets 'all' -ErrorAction Continue
-    
-    Write-Host "Granting Service Principle permissions to KeyVault for [$($servicePrincipal)]" -ForegroundColor Green
-    Set-AzureRmKeyVaultAccessPolicy -VaultName $vaultName -ServicePrincipalName $servicePrincipal -PermissionsToKeys create,import,delete,list -PermissionsToSecrets 'all' -ErrorAction Continue
-
     Write-Host "Granting Service Principle permissions to KeyVault for [$($servicePrincipalId)]" -ForegroundColor Green
-    Set-AzureRmKeyVaultAccessPolicy -VaultName $vaultName -ObjectId $servicePrincipalId -PermissionsToKeys create,import,delete,list -PermissionsToSecrets 'all' -ErrorAction Continue
+    Set-AzureRmKeyVaultAccessPolicy -VaultName $vaultName -ObjectId $servicePrincipalId -PermissionsToKeys create,import,delete,list -PermissionsToSecrets 'all' -ErrorAction SilentlyContinue
 
-
+    Write-Host "Granting Service Principle permissions to KeyVault for [$($servicePrincipal)]" -ForegroundColor Green
+    Set-AzureRmKeyVaultAccessPolicy -VaultName $vaultName -ServicePrincipalName $servicePrincipal -PermissionsToKeys create,import,delete,list -PermissionsToSecrets 'all' -ErrorAction SilentlyContinue
+    
+    Write-Host "Test Granting permissions to KeyVault for [v-davidk@microsoft.com]" -ForegroundColor Green
+    Set-AzureRmKeyVaultAccessPolicy -VaultName $vaultName -UserPrincipalName 'v-davidk@microsoft.com' -PermissionsToKeys create,import,delete,list -PermissionsToSecrets 'all' -ErrorAction SilentlyContinue
+    
     $Secret = ConvertTo-SecureString -String 'Password' -AsPlainText -Force
     Write-Host "Test Setting Secret [TestSecret] to KeyVault [$($vaultName)]" -ForegroundColor Green
     Set-AzureKeyVaultSecret -VaultName $vaultName -Name 'TestSecret' -SecretValue $Secret -ErrorAction Continue
