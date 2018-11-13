@@ -1,15 +1,13 @@
-﻿Install-Module -Name AzureADPreview -Force
+﻿param
+(
+	[string] [Parameter(Mandatory=$true)] $clientId,
+	[string] [Parameter(Mandatory=$true)] $clientSecret,
+	[string] [Parameter(Mandatory=$true)] $tenantId
+)
+Install-Module -Name AzureADPreview -Force
 Get-Module -ListAvailable -Name Azure -Refresh
 
 # Workaround to use AzureAD in this task. Get an access token and call Connect-AzureAD
-$serviceNameInput = Get-VstsInput -Name ConnectedServiceNameSelector -Require
-$serviceName = Get-VstsInput -Name $serviceNameInput -Require
-$endPointRM = Get-VstsEndpoint -Name $serviceName -Require
- 
-$clientId = $endPointRM.Auth.Parameters.ServicePrincipalId
-$clientSecret = $endPointRM.Auth.Parameters.ServicePrincipalKey
-$tenantId = $endPointRM.Auth.Parameters.TenantId
-
 $adTokenUrl = "https://login.microsoftonline.com/$tenantId/oauth2/token"
 $resource = "https://graph.windows.net/"
  
@@ -32,8 +30,8 @@ $group = "sloe"
 $service = "cmts"
 $vaultName = $group+"inf"+$env+"vault"
 $region = "East US"
-$servicePrincipal = "sloeinfrastructureserviceprinciple"
-$applicationId = "06297832-089a-4452-ac9e-a518e448ba90"
+#$servicePrincipal = "sloeinfrastructureserviceprinciple"
+#$applicationId = "06297832-089a-4452-ac9e-a518e448ba90"
 
 #Scope variables
 $scriptPath = $(get-location).Path
