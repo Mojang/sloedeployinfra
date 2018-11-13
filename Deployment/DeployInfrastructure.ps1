@@ -2,20 +2,14 @@
 $env = "prod"
 $group = "sloe"
 $service = "infra"
-$serviceName = $group+$service+$env
 $region = "East US"
 
 #Scope variables
+$serviceName = $group+$service+$env
 $regionLower = $region.ToLower().Replace(" ","");
 $resourceGroupName = $serviceName+"rg"
 $storageName = $serviceName+"sa"
 $vaultName = $serviceName+"vault"
-
-Write-Host "Executing at path $($scriptPath)"
-Write-Host "Service Principal sloeinfrastructureserviceprinciple"
-Write-Host "Application ID 06297832-089a-4452-ac9e-a518e448ba90"
-
-Get-AzureRmContext
 
 #Create Azure Resource Group if not exists.
 Get-AzureRmResourceGroup -Name $resourceGroupName -ev notPresent -ea 0
