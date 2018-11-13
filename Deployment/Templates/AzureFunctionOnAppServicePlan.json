@@ -1,0 +1,50 @@
+﻿{
+  "apiVersion": "2015-08-01",
+  "name": "[parameters('appName')]",
+  "type": "Microsoft.Web/sites",
+  "kind": "functionapp",
+  "location": "[parameters('location')]",
+  "dependsOn": [
+    "[resourceId('Microsoft.Storage/storageAccounts', variables('storageAccountName'))]",
+    "[resourceId('Microsoft.Web/serverfarms', parameters('appName'))]"
+  ],
+  "properties": {
+     "serverFarmId": "[variables('appServicePlanName')]",
+     "siteConfig": {
+        "alwaysOn": true,
+        "appSettings": [
+            { "name": "FUNCTIONS_EXTENSION_VERSION", "value": "~1" },
+            { "name": "Project", "value": "src" }
+        ]
+     }
+  },
+  "resources": [
+     {
+        "apiVersion": "2015-08-01",
+        "name": "appsettings",
+        "type": "config",
+        "dependsOn": [
+          "[resourceId('Microsoft.Web/Sites', parameters('appName'))]",
+          "[resourceId('Microsoft.Web/Sites/sourcecontrols', parameters('appName'), 'web')]",
+          "[resourceId('Microsoft.Storage/storageAccounts', variables('storageAccountName'))]"
+        ],
+        "properties": {
+          "AzureWebJobsStorage": "[concat('DefaultEndpointsProtocol=https;AccountName=', variables('storageAccountName'), ';AccountKey=', listKeys(variables('storageAccountid'),'2015-05-01-preview').key1)]",
+          "AzureWebJobsDashboard": "[concat('DefaultEndpointsProtocol=https;AccountName=', variables('storageAccountName'), ';AccountKey=', listKeys(variables('storageAccountid'),'2015-05-01-preview').key1)]"
+        }
+     },
+     {
+          "apiVersion": "2015-08-01",
+          "name": "web",
+          "type": "sourcecontrols",
+          "dependsOn": [
+            "[resourceId('Microsoft.Web/sites/', parameters('appName'))]"
+          ],
+          "properties": {
+            "RepoUrl": "[parameters('sourceCodeRepositoryURL')]",
+            "branch": "[parameters('sourceCodeBranch')]",
+            "IsManualIntegration": "[parameters('sourceCodeManualIntegration')]"
+          }
+     }
+  ]
+}
