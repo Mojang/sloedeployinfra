@@ -1,4 +1,5 @@
-﻿#Required Variables
+﻿Install-Module -Name AzureADPreview -Force -Scope CurrentUser
+#Required Variables
 $env = "prod"
 $group = "sloe"
 $service = "cmts"
@@ -25,7 +26,9 @@ Get-AzureRmResourceGroup -Name $resourceGroupName -ev notPresent -ea 0
 if ($notPresent) 
 {
     Write-Host "Azure Resource Group Not Present. Deploying Infrastructure..."
-
+    Write-Host "Creating Azure Resource Group [$($resourceGroupName)] in [$($region)]" -ForegroundColor Green
+    New-AzureRmResourceGroup -Name $resourceGroupName -Location $region
+    $resourceGroup = Get-AzureRmResourceGroup -Name $resourceGroupName
     Write-Host "Creating Azure AD App [$($appName)] URI [https://$($appName)]"
     $NewApp=New-AzureADApplication -DisplayName "$($appName)" -IdentifierUris "https://$($appName)"
     Write-Host "Creating Service Principal for AD App [$($appName)]"
