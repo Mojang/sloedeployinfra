@@ -6,6 +6,7 @@ $region = "East US"
 
 #Scope variables
 $scriptPath = $(get-location).Path
+$sourceDir=$env:BUILD_SOURCESDIRECTORY
 $regionLower = $region.ToLower().Replace(" ","");
 $serviceName = $group+$service+$env
 $resourceGroupName = $serviceName+"rg"
@@ -13,9 +14,10 @@ $appName = $serviceName+"app"
 $appKey = $appName+"key"
 $vaultName = $group+"inf"+$env+"vault"
 
-Write-Host "path is " + $scriptPath
+Write-Host "path is " $scriptPath
 $appTemplate = "..\Templates\AzureFunctionOnAppServicePlan.json"
-Write-Host "template is " + $appTemplate
+Write-Host "template is " $appTemplate
+Write-Host "Source Dir is " $sourceDir
 
 #Create Azure Resource Group if not exists.
 Get-AzureRmResourceGroup -Name $resourceGroupName -ev notPresent -ea 0
