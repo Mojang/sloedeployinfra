@@ -1,16 +1,18 @@
-﻿$subscription = "Microsoft Minecraft Azure"
+﻿$scriptPath = $(get-location).Path
+$subscription = "Microsoft Minecraft Azure"
 $tenantId = "72f988bf-86f1-41af-91ab-2d7cd011db47"
 $env = "prod"
 $group = "sloe"
-$service = $group+"infra"+$env
+$service = "infra"
+$serviceName = $group+$service+$env
 $region = "East US"
 
-
 #Set the variables
-$resourceGroupName = $service+"rg"
-$storageName = $service+"sa"
-$vaultName = $service+"vault"
+$resourceGroupName = $serviceName+"rg"
+$storageName = $serviceName+"sa"
+$vaultName = $serviceName+"vault"
 
+Connect-AzureRmAccount
 Get-AzureRmSubscription
 
 #Select the subscription
@@ -24,6 +26,9 @@ if ($notPresent)
     Write-Host "Azure Resource Group Not Present. Deploying Infrastructure..."
     New-AzureRmResourceGroup -Name $resourceGroupName -Location $region
     $resourceGroup = Get-AzureRmResourceGroup -Name $resourceGroupName
+
+    #New-AzureRmResourceGroupDeployment -Name ExampleDeployment -ResourceGroupName ExampleResourceGroup -TemplateFile "$($scriptPath)\storage.json" -storageAccountType Standard_GRS
+
     New-AzureRmStorageAccount -ResourceGroupName $resourceGroupName -Name $storageName -SkuName Standard_LRS
     New-AzureRmKeyVault -ResourceGroupName $resourceGroup.ResourceGroupName -Name $vaultName -Location $region #"eastus"
     $vault = Get-AzureRmKeyVault -ResourceGroupName $resourceGroup.ResourceGroupName -VaultName $vaultName
