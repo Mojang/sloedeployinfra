@@ -1,11 +1,39 @@
 ﻿Install-Module -Name AzureADPreview -Force
 Get-Module -ListAvailable -Name Azure -Refresh
+
+# Workaround to use AzureAD in this task. Get an access token and call Connect-AzureAD
+$serviceNameInput = Get-VstsInput -Name ConnectedServiceNameSelector -Require
+$serviceName = Get-VstsInput -Name $serviceNameInput -Require
+$endPointRM = Get-VstsEndpoint -Name $serviceName -Require
+ 
+$clientId = $endPointRM.Auth.Parameters.ServicePrincipalId
+$clientSecret = $endPointRM.Auth.Parameters.ServicePrincipalKey
+$tenantId = $endPointRM.Auth.Parameters.TenantId
+
+$adTokenUrl = "https://login.microsoftonline.com/$tenantId/oauth2/token"
+$resource = "https://graph.windows.net/"
+ 
+$body = @{
+    grant_type    = "client_credentials"
+    client_id     = $clientId
+    client_secret = $clientSecret
+    resource      = $resource
+}
+ 
+$response = Invoke-RestMethod -Method 'Post' -Uri $adTokenUrl -ContentType "application/x-www-form-urlencoded" -Body $body
+$token = $response.access_token
+ 
+Write-Verbose "Login to AzureAD with same application as endpoint"
+Connect-AzureAD -AadAccessToken $token -AccountId $clientId -TenantId $tenantId
+
 #Required Variables
 $env = "prod"
 $group = "sloe"
 $service = "cmts"
 $vaultName = $group+"inf"+$env+"vault"
 $region = "East US"
+$servicePrincipal = "sloeinfrastructureserviceprinciple"
+$applicationId = "06297832-089a-4452-ac9e-a518e448ba90"
 
 #Scope variables
 $scriptPath = $(get-location).Path
@@ -17,8 +45,8 @@ $appKey = $appName+"key"
 $appTemplate = $scriptPath+"\..\templates\AzureFunctionOnAppServicePlan.json"
 
 Write-Host "Executing at path $($scriptPath)"
-Write-Host "Service Principal sloeinfrastructureserviceprinciple"
-Write-Host "Application ID 06297832-089a-4452-ac9e-a518e448ba90"
+Write-Host "Service Principal $($servicePrincipal)"
+Write-Host "Application ID $($applicationId)"
 
 Get-AzureRmContext
 
@@ -48,6 +76,9 @@ if ($notPresent)
     New-AzureRmResourceGroup -Name $resourceGroupName -Location $region
 
     Write-Host "Creating Azure [$($serviceName)] Function using App Service Plan in [$($region)]"
+
+    Write-Host "Validating ARM Template for [$($serviceName)] Function using App Service Plan in [$($region)]"
+    Test-AzureRmResourceGroupDeployment -ResourceGroupName testgroup -TemplateFile $appTemplate
 
     Write-Host "Creating Azure [$($serviceName)] Function using App Service Plan in [$($region)]"
     New-AzureRmResourceGroupDeployment -Name $serviceName -ResourceGroupName $resourceGroupName -TemplateFile $appTemplate
