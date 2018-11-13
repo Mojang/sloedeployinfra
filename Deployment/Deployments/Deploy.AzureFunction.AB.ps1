@@ -1,7 +1,7 @@
 ﻿#Required Variables
 $env = "prod"
 $group = "sloe"
-$service = "cmts"
+$service = "abts"
 $region = "East US"
 
 #Scope variables
