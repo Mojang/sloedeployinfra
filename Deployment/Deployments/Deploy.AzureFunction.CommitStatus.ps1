@@ -1,4 +1,5 @@
 ﻿Import-Module "C:\Program Files (x86)\Microsoft SDKs\Azure\PowerShell\ServiceManagement\Azure\Azure.psd1"
+Get-Module -ListAvailable -Name Azure -Refresh
 #Required Variables
 $env = "prod"
 $group = "sloe"
@@ -16,7 +17,7 @@ $appKey = $appName+"key"
 $appTemplate = $scriptPath+"\..\templates\AzureFunctionOnAppServicePlan.json"
 
 Write-Host "Executing at path $($scriptPath)"
-Write-Host "Service Principal dev-mc-Minecraft-0f4f1cf7-6423-415c-9f9c-599eb36bdf4f"
+Write-Host "Service Principal sloeinfrastructureserviceprinciple"
 Write-Host "Application ID 06297832-089a-4452-ac9e-a518e448ba90"
 
 Get-AzureRmContext
@@ -56,5 +57,5 @@ if ($notPresent)
 }
 else 
 {
-    Write-Host "Azure Resource Group Exists. Skipping" -ForegroundColor Yellow
+    Write-Host "Azure Resource Group [$($resourceGroupName)] Exists. Skipping" -ForegroundColor Yellow
 }
