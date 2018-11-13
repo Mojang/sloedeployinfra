@@ -12,7 +12,9 @@ $serviceName = $group+$service+$env
 $resourceGroupName = $serviceName+"rg"
 $appName = $serviceName+"app"
 $appKey = $appName+"key"
-$appTemplate = $scriptPath+"\..\templates\AzureFunctionOnAppServicePlan.json"
+Write-Host "path is " + $scriptPath
+$appTemplate = $scriptPath+"\..\Templates\AzureFunctionOnAppServicePlan.json"
+Write-Host "template is " + $appTemplate
 
 #Create Azure Resource Group if not exists.
 Get-AzureRmResourceGroup -Name $resourceGroupName -ev notPresent -ea 0
