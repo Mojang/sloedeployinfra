@@ -1,0 +1,63 @@
+﻿{
+    "$schema": "http://schema.management.azure.com/schemas/2014-04-01-preview/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+  "parameters": {
+    "vaultName": {
+      "type": "string"
+    },
+    "vaultlocation": {
+      "type": "string"
+    },
+    "skumode": {
+      "type": "string",
+      "defaultValue": "Standard",
+      "allowedValues": [
+        "Standard",
+        "standard",
+        "Premium",
+        "premium"
+      ],
+      "metadata": {
+        "description": "SKU for the vault"
+      }
+    },
+    "accessPolicyList": {
+      "type": "array",
+      "defaultValue": [],
+      "metadata": {
+        "description": "The access policies defined for this vault."
+      }
+    },
+    "tenant": {
+      "type": "string"
+    },
+    "isenabledForDeployment": {
+      "type": "bool"
+    },
+    "isenabledForTemplateDeployment": {
+      "type": "bool"
+    },
+    "isenabledForDiskEncryption": {
+      "type": "bool"
+    }
+  },
+    "resources": [
+      {
+        "apiVersion": "2015-06-01",
+        "name": "[parameters('vaultName')]",
+        "location": "[parameters('vaultlocation')]",
+        "type": "Microsoft.KeyVault/vaults",
+        "properties": {
+          "enabledForDeployment": "[parameters('isenabledForDeployment')]",
+          "enabledForTemplateDeployment": "[parameters('isenabledForTemplateDeployment')]",
+          "enabledForDiskEncryption": "[parameters('isenabledForDiskEncryption')]",
+          "accessPolicies": "[parameters('accessPolicyList')]",
+          "tenantId": "[parameters('tenant')]",
+          "sku": {
+            "name": "[parameters('skumode')]",
+            "family": "A"
+          }
+        }
+      }
+    ]
+}

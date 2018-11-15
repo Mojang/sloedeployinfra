@@ -1,0 +1,102 @@
+﻿{
+    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentParameters.json#",
+    "contentVersion": "1.0.0.0",
+  "parameters": {
+    "vaultName": {
+      "value": "valueFromParameterFile"
+    },
+    "vaultlocation": {
+      "value": "valueFromParameterFile"
+    },
+    "skumode": {
+      "value": "Standard"
+    },
+    "accessPolicyList": {
+      "value": [
+        {
+          "objectId": "The object ID for your AAD user goes here so that you can read secrets etc",
+          "tenantId": "Your Tenant Id goes here",
+          "permissions": {
+            "keys": [
+              "Get",
+              "List"
+            ],
+            "secrets": [
+              "Get",
+              "List"
+            ],
+            "certificates": [
+              "Get",
+              "List"
+            ]
+          }
+        },
+        {
+          "objectId": "The object ID for the service principal goes here Get-AzureRmADServicePrincipal -ServicePrincipalName <Service Principal Application ID>",
+          "tenantId": "Your Tenant Id goes here",
+          "permissions": {
+            "keys": [
+              "Get",
+              "List",
+              "Update",
+              "Create",
+              "Import",
+              "Delete",
+              "Recover",
+              "Backup",
+              "Restore"
+            ],
+            "secrets": [
+              "Get",
+              "List",
+              "Set",
+              "Delete",
+              "Recover",
+              "Backup",
+              "Restore"
+            ],
+            "certificates": [
+              "Get",
+              "List",
+              "Update",
+              "Create",
+              "Import",
+              "Delete",
+              "ManageContacts",
+              "ManageIssuers",
+              "GetIssuers",
+              "ListIssuers",
+              "SetIssuers",
+              "DeleteIssuers"
+            ]
+          },
+          "applicationId": null
+        },
+        {
+        "objectId": "5479eaf6-31a3-4be3-9fb6-c2cdadc31735",
+        "tenantId": "Your Tenant Id goes here",
+        "permissions": {
+            "keys": [],
+            "secrets": [
+                "Get"
+            ],
+            "certificates": []
+        },
+        "applicationId": null
+    }
+      ]
+    },
+    "tenant": {
+      "value": "Your Tenant Id goes here"
+    },
+    "isenabledForDeployment": {
+      "value": true
+    },
+    "isenabledForTemplateDeployment": {
+      "value": false
+    },
+    "isenabledForDiskEncryption": {
+      "value": false
+    }
+  }
+}
